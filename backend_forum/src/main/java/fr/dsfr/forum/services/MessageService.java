@@ -27,9 +27,13 @@ public class MessageService {
      * @param id
      * @return
      */
-    public Message updateMessageById(Long id){
+    public Message updateMessageById(Long id, Message message) {
         Message messageToUpdate = messageRepository.findById(id).orElse(null);
         if (messageToUpdate != null) {
+            messageToUpdate.setContenu(message.getContenu());
+            messageToUpdate.setDateCreation(message.getDateCreation());
+            messageToUpdate.setSujet(message.getSujet());
+            messageToUpdate.setAuteur(message.getAuteur());
             return messageRepository.save(messageToUpdate);
         }
         return null;

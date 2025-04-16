@@ -7,6 +7,6 @@ import java.util.List;
 
 public interface ForumRepository extends JpaRepository<Forum, Long> {
 
-    List<Forum> findByNomContaining(String nom);
+    List<Forum> findByTitreContaining(String titre);
 
 }
