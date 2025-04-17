@@ -3,6 +3,6 @@ package fr.dsfr.forum.beans.dto;
 import lombok.Data;
 
 @Data
-public class CreerSujetDTO {
+public class ModifierSujetDTO {
     private String titre;
 }

@@ -20,15 +20,15 @@ import java.time.LocalDateTime;
 import java.util.List;
 import java.util.stream.Collectors;
 
-@RestController(value = "/messages")
-@RequestMapping
+@RestController
+@RequestMapping(value = "/forums/{forumId}/sujets/{sujetId}/messages")
 @RequiredArgsConstructor
 public class MessageController {
 
     private final MessageService messageService;
     private final EntityValidatorService validator;
 
-    @GetMapping("/messages")
+    @RequestMapping(method = RequestMethod.GET, value = "/messages/all")
     public ResponseEntity<List<MessageReponseDTO>> getAllMessages() {
         List<MessageReponseDTO> dtos = messageService.getAllMessages()
                 .stream()
@@ -37,20 +37,7 @@ public class MessageController {
         return ResponseEntity.ok(dtos);
     }
 
-    @GetMapping("/messages/{id}")
-    public ResponseEntity<MessageReponseDTO> getMessageById(@PathVariable Long id) {
-        Message message = validator.getMessageOrThrow(id);
-        return ResponseEntity.ok(MessageReponseDTO.convertirDTO(message));
-    }
-
-    @DeleteMapping("/messages/{id}/delete")
-    public ResponseEntity<Void> deleteMessage(@PathVariable Long id) {
-        validator.getMessageOrThrow(id);
-        messageService.deleteMessage(id);
-        return ResponseEntity.noContent().build();
-    }
-
-    @GetMapping("/forums/{forumId}/sujets/{sujetId}/messages")
+    @GetMapping()
     public ResponseEntity<List<MessageReponseDTO>> getMessagesBySujetOfForum(
             @PathVariable Long forumId,
             @PathVariable Long sujetId) {
@@ -66,8 +53,14 @@ public class MessageController {
 
         return ResponseEntity.ok(dtos);
     }
+    @GetMapping("/{messageId}")
+    public ResponseEntity<MessageReponseDTO> getMessageById(@PathVariable Long messageId) {
+        Message message = validator.getMessageOrThrow(messageId);
+        return ResponseEntity.ok(MessageReponseDTO.convertirDTO(message));
+    }
 
-    @PostMapping("/forums/{forumId}/sujets/{sujetId}/messages/create")
+
+    @PostMapping("/create")
     public ResponseEntity<MessageReponseDTO> createMessageInSujetOfForum(
             @PathVariable Long forumId,
             @PathVariable Long sujetId,
@@ -94,7 +87,7 @@ public class MessageController {
         return ResponseEntity.status(HttpStatus.CREATED).body(reponse);
     }
 
-    @PutMapping("/forums/{forumId}/sujets/{sujetId}/messages/{messageId}/update")
+    @PutMapping("/{messageId}/update")
     public ResponseEntity<MessageReponseDTO> updateMessageInSujetOfForum(
             @PathVariable Long forumId,
             @PathVariable Long sujetId,
@@ -124,7 +117,7 @@ public class MessageController {
         return ResponseEntity.ok(reponse);
     }
 
-    @PatchMapping("/forums/{forumId}/sujets/{sujetId}/messages/{messageId}/patch")
+    @PatchMapping("/{messageId}/patch")
     public ResponseEntity<MessageReponseDTO> patchMessageInSujetOfForum(
             @PathVariable Long forumId,
             @PathVariable Long sujetId,
@@ -161,5 +154,11 @@ public class MessageController {
         return ResponseEntity.ok(reponse);
     }
 
+    @DeleteMapping("/{messageId}/delete")
+    public ResponseEntity<Void> deleteMessage(@PathVariable Long messageId) {
+        validator.getMessageOrThrow(messageId);
+        messageService.deleteMessage(messageId);
+        return ResponseEntity.noContent().build();
+    }
 
 }
