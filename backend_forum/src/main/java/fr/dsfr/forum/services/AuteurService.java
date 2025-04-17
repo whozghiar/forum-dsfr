@@ -1,6 +1,8 @@
 package fr.dsfr.forum.services;
 
 import fr.dsfr.forum.beans.Auteur;
+import fr.dsfr.forum.beans.dto.AuteurDTO.AuteurReponseDTO;
+import fr.dsfr.forum.beans.dto.MessageDTO.MessageReponseDTO;
 import fr.dsfr.forum.repositories.AuteurRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -10,6 +12,12 @@ import java.util.List;
 @Service
 @RequiredArgsConstructor
 public class AuteurService {
+
+    /**
+     * Service de gestion des messages
+     */
+    private final MessageService messageService;
+
     private final AuteurRepository auteurRepository;
 
     /**
@@ -80,4 +88,23 @@ public class AuteurService {
     }
 
 
+    // ----------- MÉTHODES DE PROJECTION -------------- //
+    /**
+     * Enrichit les informations de l'auteur avec les messages associés ainsi que le nombre de messages.
+     * @param {@link Auteur} auteur
+     * @return {@link AuteurReponseDTO}
+     */
+    public AuteurReponseDTO enrichirAuteurDTO(Auteur auteur) {
+        AuteurReponseDTO dto = AuteurReponseDTO.convertir(auteur);
+
+        var messages = messageService.getMessageByAuteurId(dto.getAuteurId())
+                .stream()
+                .map(MessageReponseDTO::convertir)
+                .toList();
+
+        dto.setMessages(messages);
+        dto.setNbMessages(messages.size());
+
+        return dto;
+    }
 }

@@ -1,6 +1,7 @@
-package fr.dsfr.forum.beans.dto;
+package fr.dsfr.forum.beans.dto.SujetDTO;
 
 import fr.dsfr.forum.beans.Sujet;
+import fr.dsfr.forum.beans.dto.MessageDTO.MessageReponseDTO;
 import lombok.Data;
 
 import java.util.List;
@@ -21,7 +22,7 @@ public class SujetReponseDTO {
 
         // Convertir les messages en DTO et les ajouter à la liste
         List<MessageReponseDTO> messageReponseDTOs = sujet.getMessages().stream()
-                .map(MessageReponseDTO::convertirDTO)
+                .map(MessageReponseDTO::convertir)
                 .toList();
 
         sujetReponseDTO.setMessages(messageReponseDTOs);

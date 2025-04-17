@@ -2,9 +2,9 @@ package fr.dsfr.forum.controllers;
 
 import fr.dsfr.forum.beans.Forum;
 import fr.dsfr.forum.beans.Sujet;
-import fr.dsfr.forum.beans.dto.CreerSujetDTO;
-import fr.dsfr.forum.beans.dto.ModifierSujetDTO;
-import fr.dsfr.forum.beans.dto.SujetReponseDTO;
+import fr.dsfr.forum.beans.dto.SujetDTO.CreerSujetDTO;
+import fr.dsfr.forum.beans.dto.SujetDTO.ModifierSujetDTO;
+import fr.dsfr.forum.beans.dto.SujetDTO.SujetReponseDTO;
 import fr.dsfr.forum.services.EntityValidatorService;
 import fr.dsfr.forum.services.SujetService;
 import lombok.RequiredArgsConstructor;
@@ -91,6 +91,7 @@ public class SujetController {
 
         Sujet updated = sujetService.updateSujetById(sujetId, sujet);
 
+        // Convertit le sujet mis à jour en DTO
         SujetReponseDTO reponse = SujetReponseDTO.convertir(updated);
 
         return ResponseEntity.ok(reponse);

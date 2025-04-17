@@ -3,14 +3,11 @@ package fr.dsfr.forum.controllers;
 import fr.dsfr.forum.beans.Auteur;
 import fr.dsfr.forum.beans.Message;
 import fr.dsfr.forum.beans.Sujet;
-import fr.dsfr.forum.beans.dto.CreerMessageDTO;
-import fr.dsfr.forum.beans.dto.MessageReponseDTO;
-import fr.dsfr.forum.beans.dto.ModifierMessageDTO;
-import fr.dsfr.forum.exceptions.EntityNotFoundException;
+import fr.dsfr.forum.beans.dto.MessageDTO.CreerMessageDTO;
+import fr.dsfr.forum.beans.dto.MessageDTO.MessageReponseDTO;
+import fr.dsfr.forum.beans.dto.MessageDTO.ModifierMessageDTO;
 import fr.dsfr.forum.services.EntityValidatorService;
-import fr.dsfr.forum.services.ForumService;
 import fr.dsfr.forum.services.MessageService;
-import fr.dsfr.forum.services.SujetService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -18,7 +15,6 @@ import org.springframework.web.bind.annotation.*;
 
 import java.time.LocalDateTime;
 import java.util.List;
-import java.util.stream.Collectors;
 
 @RestController
 @RequestMapping(value = "/forums/{forumId}/sujets/{sujetId}/messages")
@@ -32,7 +28,7 @@ public class MessageController {
     public ResponseEntity<List<MessageReponseDTO>> getAllMessages() {
         List<MessageReponseDTO> dtos = messageService.getAllMessages()
                 .stream()
-                .map(MessageReponseDTO::convertirDTO)
+                .map(MessageReponseDTO::convertir)
                 .toList();
         return ResponseEntity.ok(dtos);
     }
@@ -48,7 +44,7 @@ public class MessageController {
         // Récupère les messages liés à ce sujet
         List<MessageReponseDTO> dtos = messageService.getMessageBySujetId(sujetId)
                 .stream()
-                .map(MessageReponseDTO::convertirDTO)
+                .map(MessageReponseDTO::convertir)
                 .toList();
 
         return ResponseEntity.ok(dtos);
@@ -56,7 +52,7 @@ public class MessageController {
     @GetMapping("/{messageId}")
     public ResponseEntity<MessageReponseDTO> getMessageById(@PathVariable Long messageId) {
         Message message = validator.getMessageOrThrow(messageId);
-        return ResponseEntity.ok(MessageReponseDTO.convertirDTO(message));
+        return ResponseEntity.ok(MessageReponseDTO.convertir(message));
     }
 
 
@@ -82,7 +78,7 @@ public class MessageController {
         Message created = messageService.createMessage(message);
 
         // Convertit le message créé en DTO
-        MessageReponseDTO reponse = MessageReponseDTO.convertirDTO(created);
+        MessageReponseDTO reponse = MessageReponseDTO.convertir(created);
 
         return ResponseEntity.status(HttpStatus.CREATED).body(reponse);
     }
@@ -112,7 +108,7 @@ public class MessageController {
         Message updated = messageService.updateMessageById(messageId, message);
 
         // Convertit le message mis à jour en DTO
-        MessageReponseDTO reponse = MessageReponseDTO.convertirDTO(updated);
+        MessageReponseDTO reponse = MessageReponseDTO.convertir(updated);
 
         return ResponseEntity.ok(reponse);
     }
@@ -149,7 +145,7 @@ public class MessageController {
         Message updated = messageService.updateMessageById(messageId, message);
 
         // Convertit le message mis à jour en DTO
-        MessageReponseDTO reponse = MessageReponseDTO.convertirDTO(updated);
+        MessageReponseDTO reponse = MessageReponseDTO.convertir(updated);
 
         return ResponseEntity.ok(reponse);
     }

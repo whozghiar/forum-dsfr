@@ -1,4 +1,4 @@
-package fr.dsfr.forum.beans.dto;
+package fr.dsfr.forum.beans.dto.MessageDTO;
 
 import fr.dsfr.forum.beans.Message;
 import lombok.Data;
@@ -18,7 +18,7 @@ public class MessageReponseDTO {
      * @param message
      * @return
      */
-    public static MessageReponseDTO convertirDTO(Message message){
+    public static MessageReponseDTO convertir(Message message){
         MessageReponseDTO messageReponseDTO = new MessageReponseDTO();
         messageReponseDTO.setMessageId(message.getId());
         messageReponseDTO.setSujetId(message.getSujet().getId());

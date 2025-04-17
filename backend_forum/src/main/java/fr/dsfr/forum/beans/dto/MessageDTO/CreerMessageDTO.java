@@ -1,4 +1,4 @@
-package fr.dsfr.forum.beans.dto;
+package fr.dsfr.forum.beans.dto.MessageDTO;
 
 import lombok.Data;
 
