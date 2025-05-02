@@ -2,15 +2,13 @@ services:
   db:
     image: postgres:latest
     container_name: forum_dsfr_db
+    env_file:
+      - credentials.env
     environment:
-      POSTGRES_USER: ${POSTGRES_USER}
-      # Récupérer le mot de passe dans le fichier .env
-      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
       POSTGRES_DB: forum_dsfr_db
     ports:
       - "5432:5432"
     volumes:
       - forum-db-data:/var/lib/postgresql/data
-
 volumes:
   forum-db-data:

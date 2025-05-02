@@ -3,12 +3,14 @@ package fr.dsfr.forum.services;
 import fr.dsfr.forum.beans.Message;
 import fr.dsfr.forum.repositories.MessageRepository;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
 
 @Service
 @RequiredArgsConstructor
+@Slf4j
 public class MessageService {
 
     private final MessageRepository messageRepository;
@@ -19,6 +21,7 @@ public class MessageService {
      * @return
      */
     public Message createMessage(Message message) {
+        log.info("Création d'un message : {}", message);
         return messageRepository.save(message);
     }
 
@@ -28,6 +31,7 @@ public class MessageService {
      * @return
      */
     public Message updateMessageById(Long id, Message message) {
+        log.info("Mise à jour du message ID {} avec données : {}", id, message);
         Message messageToUpdate = messageRepository.findById(id).orElse(null);
         if (messageToUpdate != null) {
             messageToUpdate.setContenu(message.getContenu());
@@ -36,6 +40,7 @@ public class MessageService {
             messageToUpdate.setAuteur(message.getAuteur());
             return messageRepository.save(messageToUpdate);
         }
+        log.warn("Message ID {} non trouvé pour mise à jour", id);
         return null;
     }
 
@@ -44,6 +49,7 @@ public class MessageService {
      * @param id
      */
     public void deleteMessage(Long id) {
+        log.info("Suppression du message ID {}", id);
         messageRepository.deleteById(id);
     }
 
@@ -53,6 +59,7 @@ public class MessageService {
      * @return
      */
     public Message getMessageById(Long id) {
+        log.info("Récupération du message ID {}", id);
         return messageRepository.findById(id).orElse(null);
     }
 
@@ -62,6 +69,7 @@ public class MessageService {
      * @return
      */
     public List<Message> getMessageBySujetId(Long sujetId) {
+        log.info("Récupération des messages du sujet ID {}", sujetId);
         return messageRepository.findBySujetId(sujetId);
     }
 
@@ -71,6 +79,7 @@ public class MessageService {
      * @return
      */
     public List<Message> getMessageByAuteurId(Long auteurId) {
+        log.info("Récupération des messages de l'auteur ID {}", auteurId);
         return messageRepository.findByAuteurId(auteurId);
     }
 
@@ -79,6 +88,7 @@ public class MessageService {
      * @return
      */
     public List<Message> getAllMessages() {
+        log.info("Récupération de tous les messages");
         return messageRepository.findAll();
     }
 }

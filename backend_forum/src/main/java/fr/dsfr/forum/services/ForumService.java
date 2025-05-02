@@ -3,12 +3,14 @@ package fr.dsfr.forum.services;
 import fr.dsfr.forum.beans.Forum;
 import fr.dsfr.forum.repositories.ForumRepository;
 import lombok.AllArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
 
 @Service
 @AllArgsConstructor
+@Slf4j
 public class ForumService {
     private final ForumRepository forumRepository;
 
@@ -18,6 +20,7 @@ public class ForumService {
      * @return
      */
     public Forum createForum(Forum forum) {
+        log.info("Création d'un forum : {}", forum);
         return forumRepository.save(forum);
     }
 
@@ -28,6 +31,7 @@ public class ForumService {
      * @return
      */
     public Forum updateForumById(Long id, Forum forum) {
+        log.info("Mise à jour du forum ID {} avec données : {}", id, forum);
         Forum forumToUpdate = forumRepository.findById(id).orElse(null);
         if (forumToUpdate != null) {
             forumToUpdate.setTitre(forum.getTitre());
@@ -35,6 +39,7 @@ public class ForumService {
             forumToUpdate.setSujets(forum.getSujets());
             return forumRepository.save(forumToUpdate);
         }
+        log.warn("Forum ID {} non trouvé pour mise à jour", id);
         return null;
     }
 
@@ -44,6 +49,7 @@ public class ForumService {
      * @return
      */
     public void deleteForum(Long id) {
+        log.info("Suppression du forum ID {}", id);
         forumRepository.deleteById(id);
     }
 
@@ -52,6 +58,7 @@ public class ForumService {
      * @return
      */
     public List<Forum> getAllForums() {
+        log.info("Récupération de tous les forums");
         return forumRepository.findAll();
     }
 
@@ -61,6 +68,7 @@ public class ForumService {
      * @return
      */
     public Forum getForumById(Long id) {
+        log.info("Recherche du forum par ID {}", id);
         return forumRepository.findById(id).orElse(null);
     }
 

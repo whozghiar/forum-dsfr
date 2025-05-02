@@ -5,12 +5,14 @@ import fr.dsfr.forum.beans.Sujet;
 import fr.dsfr.forum.repositories.ForumRepository;
 import fr.dsfr.forum.repositories.SujetRepository;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
 
 @Service
 @RequiredArgsConstructor
+@Slf4j
 public class SujetService {
 
     private final SujetRepository sujetRepository;
@@ -23,6 +25,7 @@ public class SujetService {
      * @return
      */
     public Sujet createSujet(Sujet sujet) {
+        log.info("Création d'un sujet : {}", sujet);
         return sujetRepository.save(sujet);
     }
 
@@ -32,6 +35,7 @@ public class SujetService {
      * @param sujet
      */
     public Sujet createSujet(Long forumId, Sujet sujet) {
+        log.info("Création d'un sujet dans le forum ID {} : {}", forumId, sujet);
         Forum forum = forumRepository.findById(forumId).orElse(null);
         if (forum != null) {
             sujet.setForum(forum);
@@ -47,12 +51,14 @@ public class SujetService {
      * @return
      */
     public Sujet updateSujetById(Long id, Sujet sujet) {
+        log.info("Mise à jour du sujet ID {} avec données : {}", id, sujet);
         Sujet sujetToUpdate = sujetRepository.findById(id).orElse(null);
         if (sujetToUpdate != null) {
             sujetToUpdate.setTitre(sujet.getTitre());
             sujetToUpdate.setMessages(sujet.getMessages());
             return sujetRepository.save(sujetToUpdate);
         }
+        log.warn("Sujet ID {} non trouvé pour mise à jour", id);
         return null;
     }
 
@@ -61,6 +67,7 @@ public class SujetService {
      * @param id
      */
     public void deleteSujet(Long id) {
+        log.info("Suppression du sujet ID {}", id);
         sujetRepository.deleteById(id);
     }
 
@@ -70,6 +77,7 @@ public class SujetService {
      * @return
      */
     public Sujet getSujetById(Long id) {
+        log.info("Recherche du sujet par ID {}", id);
         return sujetRepository.findById(id).orElse(null);
     }
 
@@ -79,6 +87,7 @@ public class SujetService {
      * @return
      */
     public List<Sujet> getSujetByForumId(Long forumId) {
+        log.info("Récupération des sujets du forum ID {}", forumId);
         return sujetRepository.findByForumId(forumId);
     }
 
@@ -88,6 +97,7 @@ public class SujetService {
      * @return
      */
     public List<Sujet> getSujetByTitreContaining(String titre) {
+        log.info("Recherche de sujets contenant le titre '{}'", titre);
         return sujetRepository.findByTitreContaining(titre);
     }
 
@@ -96,6 +106,7 @@ public class SujetService {
      * @return
      */
     public List<Sujet> getAllSujets() {
+        log.info("Récupération de tous les sujets");
         return sujetRepository.findAll();
     }
 

@@ -6,10 +6,12 @@ import fr.dsfr.forum.beans.Message;
 import fr.dsfr.forum.beans.Sujet;
 import fr.dsfr.forum.exceptions.EntityNotFoundException;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 
 @Service
 @RequiredArgsConstructor
+@Slf4j
 public class EntityValidatorService {
 
     private final ForumService forumService;
@@ -23,8 +25,10 @@ public class EntityValidatorService {
      * @return
      */
     public Forum getForumOrThrow(Long forumId) {
+        log.info("Récupération du forum avec ID: {}", forumId);
         Forum forum = forumService.getForumById(forumId);
         if (forum == null) {
+            log.warn("Forum non trouvé pour l'ID: {}", forumId);
             throw new EntityNotFoundException("Forum non trouvé pour l'ID: " + forumId);
         }
         return forum;
@@ -36,8 +40,10 @@ public class EntityValidatorService {
      * @return
      */
     public Sujet getSujetOrThrow(Long sujetId) {
+        log.info("Récupération du sujet avec ID: {}", sujetId);
         Sujet sujet = sujetService.getSujetById(sujetId);
         if (sujet == null) {
+            log.warn("Sujet non trouvé pour l'ID: {}", sujetId);
             throw new EntityNotFoundException("Sujet non trouvé pour l'ID: " + sujetId);
         }
         return sujet;
@@ -50,8 +56,10 @@ public class EntityValidatorService {
      * @return
      */
     public Sujet getSujetInForumOrThrow(Long sujetId, Long forumId) {
+        log.info("Récupération du sujet avec ID: {} dans le forum ID: {}", sujetId, forumId);
         Sujet sujet = getSujetOrThrow(sujetId);
         if (!sujet.getForum().getId().equals(forumId)) {
+            log.warn("Le sujet {} n'appartient pas au forum {}", sujetId, forumId);
             throw new EntityNotFoundException("Le sujet " + sujetId + " n'appartient pas au forum " + forumId);
         }
         return sujet;
@@ -63,8 +71,10 @@ public class EntityValidatorService {
      * @return
      */
     public Auteur getAuteurOrThrow(Long auteurId) {
+        log.info("Récupération de l'auteur avec ID: {}", auteurId);
         Auteur auteur = auteurService.getAuteurById(auteurId);
         if (auteur == null) {
+            log.warn("Auteur non trouvé pour l'ID: {}", auteurId);
             throw new EntityNotFoundException("Auteur non trouvé pour l'ID: " + auteurId);
         }
         return auteur;
@@ -76,8 +86,10 @@ public class EntityValidatorService {
      * @return
      */
     public Message getMessageOrThrow(Long messageId) {
+        log.info("Récupération du message avec ID: {}", messageId);
         Message message = messageService.getMessageById(messageId);
         if (message == null) {
+            log.warn("Message non trouvé pour l'ID: {}", messageId);
             throw new EntityNotFoundException("Message non trouvé pour l'ID: " + messageId);
         }
         return message;
