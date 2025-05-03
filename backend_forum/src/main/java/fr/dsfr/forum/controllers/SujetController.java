@@ -12,27 +12,13 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
-import java.util.List;
-
 @RestController
-@RequestMapping("/forums/{forumId}/sujets")
+@RequestMapping("/api/forums/{forumId}/sujets")
 @RequiredArgsConstructor
 public class SujetController {
 
     private final SujetService sujetService;
     private final EntityValidatorService validator;
-
-    @GetMapping
-    public ResponseEntity<List<SujetReponseDTO>> getSujetsParForum(@PathVariable Long forumId) {
-        validator.getForumOrThrow(forumId);
-
-        List<SujetReponseDTO> dtos = sujetService.getSujetByForumId(forumId)
-                .stream()
-                .map(SujetReponseDTO::convertir)
-                .toList();
-
-        return ResponseEntity.ok(dtos);
-    }
 
 
     @GetMapping("/{sujetId}")

@@ -17,7 +17,7 @@ import java.time.LocalDateTime;
 import java.util.List;
 
 @RestController
-@RequestMapping(value = "/forums/{forumId}/sujets/{sujetId}/messages")
+@RequestMapping(value = "/api/forums/{forumId}/sujets/{sujetId}/messages")
 @RequiredArgsConstructor
 public class MessageController {
 
