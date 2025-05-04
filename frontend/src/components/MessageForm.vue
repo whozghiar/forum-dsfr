@@ -192,7 +192,7 @@ export default {
         .replace(
           /^((?:> )+)(.*)$/gm, // Gérer les citations imbriquées
           (_, markers, content) => {
-            const level = markers.split("> ").length - 1; // Calcul du niveau de citation
+            const level = markers.split('> ').length - 1; // Calcul du niveau de citation
             return `<blockquote style="margin-left: ${level * 10}px; border-left: 4px solid black; padding-left: 10px;">${content.trim()}</blockquote>`;
           }
         );

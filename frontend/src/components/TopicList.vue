@@ -3,49 +3,32 @@
     <div class="header">
       <h1>Liste des sujets</h1>
       <div class="controls">
-        <!-- Bouton pour ouvrir la modale -->
-        <button
-          class="fr-btn fr-btn--primary"
-          @click="openNewTopicModal"
-        >
+        <button class="fr-btn fr-btn--primary" @click="openNewTopicModal">
           Nouveau sujet
         </button>
-        <select
-          v-model="filter"
-          class="fr-select"
-        >
-          <option value="">
-            Sujet
-          </option>
-          <option value="recent">
-            Les plus récents
-          </option>
-          <option value="popular">
-            Les plus populaires
-          </option>
+
+        <select v-model="filter" class="fr-select">
+          <option value="">Sujet</option>
+          <option value="recent">Les plus récents</option>
+          <option value="popular">Les plus populaires</option>
         </select>
+
         <div class="search-bar">
           <input
             v-model="searchQuery"
             type="search"
             class="fr-input"
             placeholder="Rechercher dans le forum"
-          >
-          <button
-            class="fr-btn"
-            @click="searchTopics"
-          >
-            Rechercher
-          </button>
+          />
+          <button class="fr-btn" @click="searchTopics">Rechercher</button>
         </div>
-        <button
-          class="fr-btn fr-btn--secondary"
-          @click="refreshTopics"
-        >
+
+        <button class="fr-btn fr-btn--secondary" @click="refreshTopics">
           Actualiser
         </button>
       </div>
     </div>
+
     <table class="fr-table">
       <thead>
       <tr>
@@ -56,37 +39,27 @@
       </tr>
       </thead>
       <tbody>
-      <tr
-        v-for="topic in filteredTopics"
-        :key="topic.id"
-      >
+      <tr v-for="topic in filteredTopics" :key="topic.id">
         <td>
-            <span
-              v-if="topic.pinned"
-              class="fr-icon-pin-fill"
-              aria-hidden="true"
-            />
+          <span v-if="topic.pinned" class="fr-icon-pin-fill" aria-hidden="true" />
           <span
             v-else
             :class="{
                 'fr-icon-folder-2-fill': true,
-                'red-icon': topic.messageCount > 19,
-                'yellow-icon': topic.messageCount <= 19
+                'red-icon': topic.nbMessages > 19,
+                'yellow-icon': topic.nbMessages <= 19
               }"
             aria-hidden="true"
           ></span>
-          {{ topic.title }}
+          {{ topic.titre }}
         </td>
-        <td :class="{ 'author-highlight': topic.isAuthorHighlighted }">
-          {{ topic.author }}
-        </td>
-        <td>{{ topic.messageCount }}</td>
-        <td>{{ topic.lastMessage }}</td>
+        <td>{{ topic.auteur.pseudo }}</td>
+        <td>{{ topic.nbMessages }}</td>
+        <td>{{ topic.dateCreation }}</td>
       </tr>
       </tbody>
     </table>
 
-    <!-- Modale contenant le formulaire -->
     <Modal :visible="isNewTopicModalVisible" @close="closeNewTopicModal">
       <MessageForm
         title="Nouveau Sujet"
@@ -98,100 +71,96 @@
   </div>
 </template>
 
-<script>
-import Modal from "./Modal.vue";
-import MessageForm from "./MessageForm.vue";
+<script lang="ts">
+import { defineComponent, onMounted, ref, computed } from 'vue'
+import { useRoute } from 'vue-router'
+import Modal from './Modal.vue'
+import MessageForm from './MessageForm.vue'
+import { creerSujet } from '@/services/sujetService'
+import { getSujetsByForumId } from '@/services/forumService'
+import type { Sujet } from '@/models/Sujet'
 
-export default {
-  name: "TopicsList",
-  components: {
-    Modal,
-    MessageForm,
-  },
-  data() {
+export default defineComponent({
+  name: 'TopicList',
+  components: { Modal, MessageForm },
+  setup() {
+    const route = useRoute()
+    const forumId = Number(route.params.forumId)
+    const topics = ref<Sujet[]>([])
+    const filter = ref('')
+    const searchQuery = ref('')
+    const isNewTopicModalVisible = ref(false)
+
+    const loadTopics = async () => {
+      try {
+        const data = await getSujetsByForumId(forumId)
+        topics.value = data.sujets;
+      } catch (error) {
+        console.error('Erreur lors du chargement des sujets', error)
+      }
+    }
+
+    const handleNewTopic = async (formData: { title: string; message: string }) => {
+      try {
+        const newSujet = await creerSujet(forumId, {
+          titre: formData.title,
+          contenu: formData.message,
+          auteurId: 1 // à remplacer par l'utilisateur authentifié
+        })
+        topics.value.push(newSujet)
+        closeNewTopicModal()
+      } catch (e) {
+        console.error('Erreur création sujet', e)
+      }
+    }
+
+    const refreshTopics = () => loadTopics()
+
+    const filteredTopics = computed(() => {
+      let filtered = topics.value
+
+      if (searchQuery.value) {
+        filtered = filtered.filter((t) =>
+          t.titre.toLowerCase().includes(searchQuery.value.toLowerCase())
+        )
+      }
+
+      if (filter.value === 'recent') {
+        return [...filtered].sort(
+          (a, b) => new Date(b.dateCreation).getTime() - new Date(a.dateCreation).getTime()
+        )
+      } else if (filter.value === 'popular') {
+        return [...filtered].sort((a, b) => b.nbMessages - a.nbMessages)
+      }
+
+      return filtered
+    })
+
+    const openNewTopicModal = () => (isNewTopicModalVisible.value = true)
+    const closeNewTopicModal = () => (isNewTopicModalVisible.value = false)
+
+    const searchTopics = () => {
+      console.log('Recherche en cours…')
+    }
+
+    onMounted(() => loadTopics())
+
     return {
-      topics: [
-        {
-          id: 1,
-          title: "[ALERTE] mon chat a bavé sur mon clavier",
-          author: "Magique",
-          messageCount: 1,
-          lastMessage: "27/01/2025",
-          pinned: false,
-        },
-        {
-          id: 2,
-          title: "Règles du forum",
-          author: "Kamoulox",
-          messageCount: 0,
-          lastMessage: "08/02/2025",
-          pinned: false,
-          isAuthorHighlighted: false,
-        },
-        {
-          id: 3,
-          title: "[BMG] Le racisme ne passera pas",
-          author: "BouleDeGomme",
-          messageCount: 256,
-          lastMessage: "23:10:37",
-        },
-      ],
-      filter: "",
-      searchQuery: "",
-      isNewTopicModalVisible: false,
-    };
-  },
-  computed: {
-    filteredTopics() {
-      let filtered = this.topics;
-
-      if (this.searchQuery) {
-        filtered = filtered.filter((topic) =>
-          topic.title.toLowerCase().includes(this.searchQuery.toLowerCase())
-        );
-      }
-
-      if (this.filter === "recent") {
-        return filtered.sort(
-          (a, b) => new Date(b.lastMessage) - new Date(a.lastMessage)
-        );
-      } else if (this.filter === "popular") {
-        return filtered.sort((a, b) => b.messageCount - a.messageCount);
-      }
-
-      return filtered;
-    },
-  },
-  methods: {
-    openNewTopicModal() {
-      this.isNewTopicModalVisible = true;
-    },
-    closeNewTopicModal() {
-      this.isNewTopicModalVisible = false;
-    },
-    handleNewTopic(newTopicData) {
-      console.log("Nouveau sujet créé :", newTopicData);
-      this.closeNewTopicModal();
-
-      // Ajouter le sujet dans la liste
-      this.topics.push({
-        id: this.topics.length + 1,
-        title: newTopicData.title,
-        author: "Moi",
-        messageCount: 0,
-        lastMessage: new Date().toISOString().slice(0, 10),
-        pinned: false,
-      });
-    },
-    searchTopics() {
-      console.log("Recherche de sujets :", this.searchQuery);
-    },
-    refreshTopics() {
-      console.log("Rafraîchir les sujets");
-    },
-  },
-};
+      topics,
+      filter,
+      searchQuery,
+      isNewTopicModalVisible,
+      openNewTopicModal,
+      closeNewTopicModal,
+      handleNewTopic,
+      refreshTopics,
+      searchTopics,
+      filteredTopics
+    }
+  }
+})
 </script>
+
 <style scoped>
 .topics-list-container {
   padding: 1.5rem;
@@ -220,14 +189,10 @@ export default {
   border-collapse: collapse;
 }
 
-.author-highlight {
-  color: green;
-  font-weight: bold;
-}
-
 .red-icon {
   color: #e1000f;
 }
+
 .yellow-icon {
   color: #fee943;
 }

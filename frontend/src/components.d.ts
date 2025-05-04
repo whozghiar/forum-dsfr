@@ -8,7 +8,7 @@ export {}
 declare module 'vue' {
   export interface GlobalComponents {
     DsfrHeader: typeof import('@gouvminint/vue-dsfr')['DsfrHeader']
-    DsfrInput: typeof import('@gouvminint/vue-dsfr')['DsfrInput']
+    ForumList: typeof import('./components/ForumList.vue')['default']
     MessageForm: typeof import('./components/MessageForm.vue')['default']
     Modal: typeof import('./components/Modal.vue')['default']
     RouterLink: typeof import('vue-router')['RouterLink']

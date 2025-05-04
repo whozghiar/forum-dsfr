@@ -1,4 +1,5 @@
 <script setup lang="ts">
+import { useScheme } from '@gouvminint/vue-dsfr'
 import useToaster from './composables/use-toaster'
 
 useScheme()
@@ -22,6 +23,12 @@ const quickLinks = [
     icon: 'ri-question-mark',
     iconRight: true,
   },
+  {
+    label: 'Forums',
+    to: '/forums',
+    icon: 'ri-mail-line',
+    iconAttrs: { color: 'var(--red-marianne-425-625)' },
+  }
 ]
 const searchQuery = ref('')
 </script>
