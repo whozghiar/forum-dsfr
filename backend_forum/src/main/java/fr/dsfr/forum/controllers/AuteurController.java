@@ -1,6 +1,7 @@
 package fr.dsfr.forum.controllers;
 
 import fr.dsfr.forum.beans.Auteur;
+import fr.dsfr.forum.beans.dto.AuteurDTO.AuteurDetailReponseDTO;
 import fr.dsfr.forum.beans.dto.AuteurDTO.AuteurReponseDTO;
 import fr.dsfr.forum.beans.dto.AuteurDTO.CreerAuteurDTO;
 import fr.dsfr.forum.beans.dto.AuteurDTO.ModifierAuteurDTO;
@@ -36,10 +37,10 @@ public class AuteurController {
 
 
     @GetMapping("/{idAuteur}")
-    public ResponseEntity<AuteurReponseDTO> getAuteurById(@PathVariable Long idAuteur) {
+    public ResponseEntity<AuteurDetailReponseDTO> getAuteurById(@PathVariable Long idAuteur) {
         Auteur auteur = validator.getAuteurOrThrow(idAuteur);
 
-        AuteurReponseDTO dto = AuteurReponseDTO.convertir(auteur);
+        AuteurDetailReponseDTO dto = AuteurDetailReponseDTO.convertir(auteur);
 
         // On récupère les messages de l'auteur
         dto.setMessages(

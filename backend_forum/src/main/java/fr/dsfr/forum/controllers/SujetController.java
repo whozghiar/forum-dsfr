@@ -38,7 +38,7 @@ public class SujetController {
         sujet.setTitre(dto.getTitre());
         sujet.setForum(forum);
 
-        Sujet created = sujetService.createSujet(sujet);
+        Sujet created = sujetService.createSujet(forumId, sujet);
 
         // On convertit le sujet créé en DTO
         SujetReponseDTO reponse = SujetReponseDTO.convertir(created);

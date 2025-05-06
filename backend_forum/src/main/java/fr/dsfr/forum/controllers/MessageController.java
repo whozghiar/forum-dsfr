@@ -24,15 +24,6 @@ public class MessageController {
     private final MessageService messageService;
     private final EntityValidatorService validator;
 
-    @RequestMapping(method = RequestMethod.GET, value = "/messages/all")
-    public ResponseEntity<List<MessageReponseDTO>> getAllMessages() {
-        List<MessageReponseDTO> dtos = messageService.getAllMessages()
-                .stream()
-                .map(MessageReponseDTO::convertir)
-                .toList();
-        return ResponseEntity.ok(dtos);
-    }
-
     @GetMapping()
     public ResponseEntity<List<MessageReponseDTO>> getMessagesBySujetOfForum(
             @PathVariable Long forumId,
@@ -45,6 +36,7 @@ public class MessageController {
         List<MessageReponseDTO> dtos = messageService.getMessageBySujetId(sujetId)
                 .stream()
                 .map(MessageReponseDTO::convertir)
+                .sorted((m1, m2) -> m1.getDateCreation().compareTo(m2.getDateCreation()))
                 .toList();
 
         return ResponseEntity.ok(dtos);

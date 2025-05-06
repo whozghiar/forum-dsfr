@@ -12,6 +12,7 @@ CREATE TABLE forum (
 CREATE TABLE sujet (
                        id SERIAL PRIMARY KEY,
                        titre VARCHAR(255) NOT NULL,
+                       epingle BOOLEAN DEFAULT FALSE,
                        forum_id INTEGER NOT NULL,
                        CONSTRAINT fk_sujet_forum FOREIGN KEY (forum_id) REFERENCES forum(id) ON DELETE CASCADE
 );

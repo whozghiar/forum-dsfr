@@ -17,6 +17,7 @@ public class SujetReponseDTO {
     private AuteurReponseDTO auteur;
     private Integer nbMessages;
     private String dateCreation;
+    private Boolean estEpingle;
 
 
     public static SujetReponseDTO convertir(Sujet sujet){
@@ -24,6 +25,7 @@ public class SujetReponseDTO {
         sujetReponseDTO.setIdSujet(sujet.getId());
         sujetReponseDTO.setTitre(sujet.getTitre());
         sujetReponseDTO.setIdForum(sujet.getForum().getId());
+        sujetReponseDTO.setEstEpingle(sujet.getEpingle());
 
         // Convertir les messages en DTO et les ajouter à la liste
         List<MessageReponseDTO> messageReponseDTOs = sujet.getMessages().stream()

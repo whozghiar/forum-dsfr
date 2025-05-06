@@ -1,6 +1,7 @@
 package fr.dsfr.forum.services;
 
 import fr.dsfr.forum.beans.Auteur;
+import fr.dsfr.forum.beans.dto.AuteurDTO.AuteurDetailReponseDTO;
 import fr.dsfr.forum.beans.dto.AuteurDTO.AuteurReponseDTO;
 import fr.dsfr.forum.beans.dto.MessageDTO.MessageReponseDTO;
 import fr.dsfr.forum.repositories.AuteurRepository;
@@ -102,6 +103,25 @@ public class AuteurService {
     /**
      * Enrichit les informations de l'auteur avec les messages associés ainsi que le nombre de messages.
      * @param {@link Auteur} auteur
+     * @return {@link AuteurDetailReponseDTO}
+     */
+    public AuteurDetailReponseDTO enrichirAuteurDetailDTO(Auteur auteur) {
+        log.info("Enrichissement de l'auteur ID {} avec les messages associés", auteur.getId());
+        AuteurDetailReponseDTO dto = AuteurDetailReponseDTO.convertir(auteur);
+        var messages = messageService.getMessageByAuteurId(dto.getAuteurId())
+                .stream()
+                .map(MessageReponseDTO::convertir)
+                .toList();
+
+        dto.setMessages(messages);
+        dto.setNbMessages(messages.size());
+
+        return dto;
+    }
+
+    /**
+     * Enrichit les informations de l'auteur avec les messages associés ainsi que le nombre de messages.
+     * @param {@link Auteur} auteur
      * @return {@link AuteurReponseDTO}
      */
     public AuteurReponseDTO enrichirAuteurDTO(Auteur auteur) {
@@ -111,9 +131,6 @@ public class AuteurService {
                 .stream()
                 .map(MessageReponseDTO::convertir)
                 .toList();
-
-        dto.setMessages(messages);
-        dto.setNbMessages(messages.size());
 
         return dto;
     }

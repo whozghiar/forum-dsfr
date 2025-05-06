@@ -20,6 +20,9 @@ public class Sujet {
     @Column(nullable = false)
     private String titre;
 
+    @Column
+    private Boolean epingle;
+
     @ManyToOne
     @JoinColumn(name = "forum_id")
     private Forum forum;

@@ -56,6 +56,7 @@ public class SujetService {
         if (sujetToUpdate != null) {
             sujetToUpdate.setTitre(sujet.getTitre());
             sujetToUpdate.setMessages(sujet.getMessages());
+            sujetToUpdate.setEpingle(sujet.getEpingle());
             return sujetRepository.save(sujetToUpdate);
         }
         log.warn("Sujet ID {} non trouvé pour mise à jour", id);
