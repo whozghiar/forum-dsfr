@@ -24,5 +24,6 @@ public class Forum {
     private String description;
 
     @OneToMany(mappedBy = "forum", cascade = CascadeType.ALL)
+    @ToString.Exclude
     private List<Sujet> sujets = new ArrayList<>();
 }

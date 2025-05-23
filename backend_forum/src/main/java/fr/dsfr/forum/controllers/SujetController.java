@@ -1,6 +1,7 @@
 package fr.dsfr.forum.controllers;
 
 import fr.dsfr.forum.beans.Forum;
+import fr.dsfr.forum.beans.Message;
 import fr.dsfr.forum.beans.Sujet;
 import fr.dsfr.forum.beans.dto.SujetDTO.CreerSujetDTO;
 import fr.dsfr.forum.beans.dto.SujetDTO.ModifierSujetDTO;
@@ -8,13 +9,17 @@ import fr.dsfr.forum.beans.dto.SujetDTO.SujetReponseDTO;
 import fr.dsfr.forum.services.EntityValidatorService;
 import fr.dsfr.forum.services.SujetService;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.time.LocalDateTime;
+
 @RestController
 @RequestMapping("/api/forums/{forumId}/sujets")
 @RequiredArgsConstructor
+@Slf4j
 public class SujetController {
 
     private final SujetService sujetService;
@@ -31,12 +36,21 @@ public class SujetController {
     public ResponseEntity<SujetReponseDTO> createSujet(
             @PathVariable Long forumId,
             @RequestBody CreerSujetDTO dto) {
-
         Forum forum = validator.getForumOrThrow(forumId);
 
+        // Création du sujet
         Sujet sujet = new Sujet();
         sujet.setTitre(dto.getTitre());
         sujet.setForum(forum);
+
+        // Création du message associé
+        Message message = new Message();
+        message.setContenu(dto.getMessage());
+        message.setDateCreation(LocalDateTime.now());
+        message.setAuteur(validator.getAuteurOrThrow(Long.parseLong(dto.getAuteurId())));
+        message.setSujet(sujet);
+
+        sujet.getMessages().add(message);
 
         Sujet created = sujetService.createSujet(forumId, sujet);
 

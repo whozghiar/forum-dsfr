@@ -17,9 +17,11 @@ public class Message {
     private Long id;
 
     @ManyToOne
+    @ToString.Exclude
     private Auteur auteur;
 
     @ManyToOne
+    @ToString.Exclude
     private Sujet sujet;
 
     @Column(columnDefinition = "TEXT")

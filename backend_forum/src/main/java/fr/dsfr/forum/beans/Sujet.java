@@ -25,9 +25,11 @@ public class Sujet {
 
     @ManyToOne
     @JoinColumn(name = "forum_id")
+    @ToString.Exclude
     private Forum forum;
 
     @OneToMany(mappedBy = "sujet", cascade = CascadeType.ALL)
+    @ToString.Exclude
     private List<Message> messages = new ArrayList<>();
 }
 
