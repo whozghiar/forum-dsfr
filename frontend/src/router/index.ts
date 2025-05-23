@@ -2,8 +2,9 @@ import { createRouter, createWebHistory } from 'vue-router'
 
 import AboutUs from '../views/AboutUs.vue'
 import Home from '../views/AppHome.vue'
-import ForumList from "@/components/ForumList.vue";
-import TopicList from "@/components/TopicList.vue";
+import ForumList from "@/components/Forum/ForumList.vue";
+import SujetList from "@/components/Sujet/SujetList.vue";
+import Sujet from "@/components/Sujet/Sujet.vue";
 
 const MAIN_TITLE = 'Gabarit de démarrage VueDsfr'
 
@@ -25,7 +26,13 @@ const routes = [
   },
   { path: '/forums/:forumId/sujets', 
     name: 'Sujets', 
-    component: TopicList }
+    component: SujetList 
+  },
+  {
+    path: '/forums/:forumId/sujets/:sujetId/messages',
+    name: 'Liste des messages',
+    component: Sujet
+  }
 ]
 
 const router = createRouter({

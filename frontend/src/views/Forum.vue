@@ -5,5 +5,5 @@
     <span class="fr-icon-ancient-gate-fill" /> <!-- Exemple icône DSFR -->
   </p>
   
-  <TopicList />
+  <SujetList />
 </template>

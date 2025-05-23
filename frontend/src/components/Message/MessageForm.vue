@@ -26,13 +26,13 @@
               <i class="fr-icon-italic"></i>
             </button>
             <button class="fr-btn fr-btn--icon-left toolbar-btn" @click="formatText('underline')">
-              <i class="fr-icon-underline"></i>
+              <i class="fr-icon-highlight"></i>
             </button>
             <button class="fr-btn fr-btn--icon-left toolbar-btn" @click="insertLink">
               <i class="fr-icon-link"></i>
             </button>
             <button class="fr-btn fr-btn--icon-left toolbar-btn" @click="addQuote">
-              <i class="fr-icon-quote"></i>
+              <i class="fr-icon-quote-line"></i>
             </button>
           </div>
           <textarea
@@ -63,22 +63,51 @@
 </template>
 
 <script>
+
+/**
+ * Composant MessageForm
+ * Permet la création et la mise en forme d’un message avec aperçu HTML.
+ */
 export default {
+  // Nom du composant
   name: "MessageForm",
+  // Définition des props pour le composant
   props: {
+    /**
+     * Titre affiché au-dessus du formulaire
+     * @type {String}
+     * @default "Nouveau Sujet"
+     */
     title: {
       type: String,
       default: "Nouveau Sujet",
     },
+    
+    /**
+     * Indique si le champ de titre doit être affiché
+     * @type {Boolean}
+     * @default true
+     */
     showTitleField: {
       type: Boolean,
       default: true,
     },
+    
+    /**
+     * Libellé du bouton de soumission
+     * @type {String}
+     * @default "Poster"
+     */
     submitButtonText: {
       type: String,
       default: "Poster",
     },
   },
+
+  /**
+   * Données réactives du composant
+   * @returns {{formData: {title: string, message: string}, previewContent: string}}
+   */
   data() {
     return {
       formData: {
@@ -88,7 +117,13 @@ export default {
       previewContent: "",
     };
   },
+  
+  // Méthodes du composant
   methods: {
+    /**
+     * Soumet le formulaire après validation
+     * Émet l’événement `submit` avec les données du formulaire.
+     */
     submitForm() {
       if (this.showTitleField && !this.formData.title) {
         alert("Veuillez renseigner un titre pour le sujet.");
@@ -105,6 +140,11 @@ export default {
       this.formData.message = "";
       this.previewContent = "";
     },
+
+    /**
+     * Applique un style Markdown à la sélection (gras, italique, souligné)
+     * @param {"bold"|"italic"|"underline"} action Type de formatage à appliquer
+     */
     formatText(action) {
       const textarea = document.getElementById("message-content");
       const start = textarea.selectionStart;
@@ -133,6 +173,11 @@ export default {
 
       this.updatePreview();
     },
+
+    /**
+     * Insère un lien Markdown dans le message
+     * Utilise un `prompt()` pour récupérer l’URL.
+     */
     insertLink() {
       const textarea = document.getElementById("message-content");
       const start = textarea.selectionStart;
@@ -148,6 +193,10 @@ export default {
         this.updatePreview();
       }
     },
+    
+    /**
+     * Ajoute une citation Markdown `>` au texte sélectionné
+     */
     addQuote() {
       const textarea = document.getElementById("message-content");
       const start = textarea.selectionStart;
@@ -165,6 +214,15 @@ export default {
 
       this.updatePreview();
     },
+
+    /**
+     * Gère les raccourcis clavier :
+     * - Ctrl+B : gras
+     * - Ctrl+I : italique
+     * - Ctrl+U : lien
+     * - Ctrl+Q : citation
+     * @param {KeyboardEvent} event
+     */
     handleKeyboardShortcuts(event) {
       if (event.ctrlKey) {
         const key = event.key.toLowerCase();
@@ -183,6 +241,10 @@ export default {
         }
       }
     },
+
+    /**
+     * Met à jour l’aperçu HTML du message en transformant le Markdown
+     */
     updatePreview() {
       this.previewContent = this.formData.message
         .replace(/\*\*(.*?)\*\*/g, "<strong>$1</strong>") // Gras

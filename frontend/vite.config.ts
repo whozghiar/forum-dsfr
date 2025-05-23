@@ -1,5 +1,4 @@
-import process from 'node:process'
-import { URL, fileURLToPath } from 'node:url'
+import { fileURLToPath, URL } from 'node:url'
 
 import { defineConfig } from 'vite'
 import vue from '@vitejs/plugin-vue'
@@ -8,29 +7,27 @@ import AutoImport from 'unplugin-auto-import/vite'
 import Components from 'unplugin-vue-components/vite'
 import {
   vueDsfrAutoimportPreset,
-  vueDsfrComponentResolver,
-} from '@gouvminint/vue-dsfr'
+  vueDsfrComponentResolver
+} from '@gouvminint/vue-dsfr/meta'
+
+const isCypress = process.env.CYPRESS === 'true'
 
 // https://vitejs.dev/config/
 export default defineConfig({
+  base: process.env.BASE_URL || '/',
   plugins: [
     vue(),
     vueJsx(),
     AutoImport({
       include: [
         /\.[tj]sx?$/,
-        /\.vue$/,
-        /\.vue\?vue/,
+        /\.vue$/, /\.vue\?vue/,
       ],
       imports: [
-        // @ts-expect-error TS2322
         'vue',
-        // @ts-expect-error TS2322
         'vue-router',
-        // @ts-expect-error TS2322
-        'vitest',
-        // @ts-expect-error TS2322
-        vueDsfrAutoimportPreset,
+        ...(isCypress ? [] : ['vitest']),
+        vueDsfrAutoimportPreset,       // Autoimport des composables de VueDsfr
       ],
       vueTemplate: true,
       dts: './src/auto-imports.d.ts',
@@ -40,23 +37,26 @@ export default defineConfig({
         globalsPropValue: true,
       },
     }),
-    // https://github.com/antfu/unplugin-vue-components
+    // Autoimport des composants utilisés dans les templates
     Components({
       extensions: ['vue'],
-      dirs: ['src/components'], // Autoimport de vos composants qui sont dans le dossier `src/components`
+      dirs: ['src/components'],        // Autoimport de vos composants qui sont dans le dossier `src/components`
       include: [/\.vue$/, /\.vue\?vue/],
       dts: './src/components.d.ts',
       resolvers: [
-        vueDsfrComponentResolver,
+        vueDsfrComponentResolver,      // Autoimport des composants de VueDsfr dans les templates
       ],
     }),
   ],
-  base: process.env.BASE_URL || '/',
   resolve: {
     alias: {
       '@': fileURLToPath(new URL('./src', import.meta.url)),
     },
   },
+  /**
+   * Configuration de Vite pour le mode développement
+   * Le proxy permet de rediriger les appels API vers le backend
+   */
   server: {
     proxy: {
       '/api': {
@@ -64,5 +64,5 @@ export default defineConfig({
         changeOrigin: true
       }
     }
-  },
+  }
 })

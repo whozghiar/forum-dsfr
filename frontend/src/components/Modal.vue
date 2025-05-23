@@ -8,15 +8,34 @@
 </template>
 
 <script>
+
+/**
+ * Composant Modal
+ * Affiche une boîte de dialogue conditionnelle avec fermeture émise via un événement.
+ */
 export default {
+  // Nom du composant
   name: "Modal",
+  // Définition des props pour le composant
   props: {
+    
+    /**
+     * Indique si la boîte de dialogue doit être visible
+     * @type {Boolean}
+     * @default false
+     */
     visible: {
       type: Boolean,
       required: true,
     },
   },
+  
+  // Méthodes du composant
   methods: {
+    /**
+     * Ferme la boîte de dialogue
+     * Émet un événement "close" pour informer le parent
+     */
     close() {
       this.$emit("close");
     },

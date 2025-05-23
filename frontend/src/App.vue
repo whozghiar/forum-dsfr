@@ -18,16 +18,15 @@ const quickLinks = [
     iconAttrs: { color: 'var(--red-marianne-425-625)' },
   },
   {
+    label: 'Forums',
+    to: '/forums',
+    icon: 'fr-icon-team-fill',
+  },
+  {
     label: 'À propos',
     to: '/a-propos',
     icon: 'ri-question-mark',
     iconRight: true,
-  },
-  {
-    label: 'Forums',
-    to: '/forums',
-    icon: 'ri-mail-line',
-    iconAttrs: { color: 'var(--red-marianne-425-625)' },
   }
 ]
 const searchQuery = ref('')
@@ -46,8 +45,4 @@ const searchQuery = ref('')
   <div class="fr-container  fr-mt-3w  fr-mt-md-5w  fr-mb-5w">
     <router-view />
   </div>
-  <AppToaster
-    :messages="toaster.messages"
-    @close-message="toaster.removeMessage($event)"
-  />
 </template>

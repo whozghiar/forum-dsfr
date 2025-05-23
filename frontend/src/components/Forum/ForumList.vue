@@ -1,11 +1,11 @@
 <template>
   <section class="fr-container">
     <h1 class="fr-h2">Liste des forums</h1>
-
-    <div v-if="erreurChargement" class="fr-alert fr-alert--error">
-      Une erreur est survenue lors du chargement des forums.
-    </div>
-
+    
+    <!-- Chargement des forums -->
+    <ChargementSpinner v-if="enChargement"/>
+    <ErreurMessage v-if="erreurChargement" message="Une erreur est sruvenue lors du chargement des forums."/>
+    
     <div class="fr-grid-row fr-grid-row--gutters fr-mt-5w">
       <div
         v-for="forum in forums"
@@ -28,27 +28,56 @@
 
 <script lang="ts">
 import { defineComponent, ref, onMounted } from 'vue'
-import type { Forum } from '@/models/Forum'
-import { getAllForums } from '@/services/forumService'
+import type { Forum } from '@/models/Forum.ts'
+import { getAllForums } from '@/services/apiService.ts'
 
+/**
+ * Composant Vue pour afficher la liste des forums.
+ * Récupère les données des forums depuis l'API et gère les erreurs de chargement.
+ */
 export default defineComponent({
+  // Nom du composant
   name: 'ForumList',
   setup() {
+    /**
+     * Liste des forums récupérés depuis l'API.
+     * @type {Ref<Forum[]>}
+     */
     const forums = ref<Forum[]>([])
-    const erreurChargement = ref(false)
 
+    /**
+     * Indicateur de chargement des forums.
+     * @type {Ref<boolean>}
+     */
+    const enChargement = ref(true)
+    
+    /**
+     * Indicateur d'erreur lors du chargement des forums.
+     * @type {Ref<boolean>}
+     */
+    const erreurChargement = ref(false)
+    
+    /**
+     * Charge les forums depuis l'API.
+     * En cas d'erreur, met à jour l'indicateur d'erreur.
+     * @returns {Promise<void>}
+     */
     const chargerForums = async () => {
       try {
         forums.value = await getAllForums()
       } catch (error) {
         console.error(error)
+        enChargement.value = false
         erreurChargement.value = true
+      }finally {
+        enChargement.value = false
       }
     }
-
+    
+    // Charge les forums lors du montage du composant.
     onMounted(chargerForums)
 
-    return { forums, erreurChargement }
+    return { forums, enChargement, erreurChargement }
   }
 })
 </script>

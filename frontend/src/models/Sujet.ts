@@ -1,5 +1,9 @@
+/**
+ * Représente un sujet récupéré depuis l'API backend.
+ * Contient l'identifiant, le titre, la date de création, l'auteur et le nombre de messages
+ */
 export interface Sujet {
-  id: number
+  idSujet: number
   titre: string
   dateCreation: string
   auteur: {
@@ -7,5 +11,5 @@ export interface Sujet {
     pseudo: string
   }
   nbMessages: number
-  dernierMessage?: string
+  estEpingle: boolean
 }
