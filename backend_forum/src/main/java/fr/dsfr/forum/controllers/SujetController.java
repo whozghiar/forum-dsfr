@@ -47,7 +47,7 @@ public class SujetController {
         Message message = new Message();
         message.setContenu(dto.getMessage());
         message.setDateCreation(LocalDateTime.now());
-        message.setAuteur(validator.getAuteurOrThrow(Long.parseLong(dto.getAuteurId())));
+        message.setAuteur(validator.getAuteurOrThrow(dto.getAuteurId()));
         message.setSujet(sujet);
 
         sujet.getMessages().add(message);
