@@ -4,7 +4,7 @@
     
     <!-- Chargement des forums -->
     <ChargementSpinner v-if="enChargement"/>
-    <ErreurMessage v-if="erreurChargement" message="Une erreur est sruvenue lors du chargement des forums."/>
+    <ErreurMessage v-if="erreurChargement" message="Une erreur est survenue lors du chargement des forums."/>
     
     <div class="fr-grid-row fr-grid-row--gutters fr-mt-5w">
       <div
