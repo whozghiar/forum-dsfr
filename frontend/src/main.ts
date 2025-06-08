@@ -1,6 +1,7 @@
 import { createApp } from 'vue'
 import App from './App.vue'
 import router from './router/index'
+import keycloak, { initKeycloak } from './services/keycloak'
 import '@gouvfr/dsfr/dist/core/core.main.min.css'
 
 import '@gouvfr/dsfr/dist/component/component.main.min.css'
@@ -13,6 +14,8 @@ import '@gouvfr/dsfr/dist/utility/icons/icons.min.css'
 
 import './main.css'
 
-createApp(App)
-  .use(router)
-  .mount('#app')
+initKeycloak().then(() => {
+  createApp(App)
+    .use(router)
+    .mount('#app')
+})

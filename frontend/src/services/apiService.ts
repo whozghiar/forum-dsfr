@@ -1,7 +1,8 @@
 // src/services/apiService.ts
 import type { Forum } from '@/models/Forum'
-import type {Sujet} from "@/models/Sujet";
-import type {Message} from "@/models/Message";
+import type { Sujet } from '@/models/Sujet'
+import type { Message } from '@/models/Message'
+import keycloak from './keycloak'
 
 /**
  * Récupère la liste de tous les forums depuis l'API backend.
@@ -10,7 +11,9 @@ import type {Message} from "@/models/Message";
  */
 export async function getAllForums(): Promise<Forum[]> {
   console.log('Appel API /api/forums...')
-  const response = await fetch('/api/forums')
+  const response = await fetch('/api/forums', {
+    headers: authHeaders()
+  })
   if (!response.ok) throw new Error('Erreur lors du chargement des forums')
   return await response.json()
 }
@@ -23,7 +26,9 @@ export async function getAllForums(): Promise<Forum[]> {
  */
 export async function getSujetsByForumId(forumId: number): Promise<Forum> {
   console.log('Appel API /api/forums/id='+ forumId)
-  const response = await fetch('/api/forums/'+ forumId)
+  const response = await fetch('/api/forums/'+ forumId, {
+    headers: authHeaders()
+  })
   if (!response.ok) throw new Error('Erreur lors du chargement des sujets')
   return await response.json()
 }
@@ -40,7 +45,7 @@ export async function creerSujet(forumId: number, dto: {
 }): Promise<Sujet> {
   const response = await fetch('/api/forums/'+forumId+'/sujets/create', {
     method: 'POST',
-    headers: { 'Content-Type': 'application/json' },
+    headers: { 'Content-Type': 'application/json', ...authHeaders() },
     body: JSON.stringify(dto)
   })
   if (!response.ok) throw new Error('Erreur lors de la création du sujet')
@@ -54,7 +59,9 @@ export async function creerSujet(forumId: number, dto: {
  */
 export async function getMessagesBySujetId(forumId: number, sujetId: number): Promise<Message[]> {
   console.log('Appel API /api/forums/'+ forumId +'/sujets/'+ sujetId + '/messages')
-  const response = await fetch('/api/forums/'+ forumId +'/sujets/'+ sujetId + '/messages')
+  const response = await fetch('/api/forums/'+ forumId +'/sujets/'+ sujetId + '/messages', {
+    headers: authHeaders()
+  })
   if (!response.ok) throw new Error('Erreur lors du chargement des messages')
   return await response.json()
 }
@@ -71,10 +78,36 @@ export async function creerMessage(forumId: number, sujetId: number, dto: {
 }): Promise<Message> {
   const response = await fetch('/api/forums/'+ forumId +'/sujets/'+ sujetId + '/messages/create', {
     method: 'POST',
-    headers: { 'Content-Type': 'application/json' },
+    headers: { 'Content-Type': 'application/json', ...authHeaders() },
     body: JSON.stringify(dto)
   })
   if (!response.ok) throw new Error('Erreur lors de la création du message')
   return await response.json()
+}
+
+export async function registerUser(dto: { username: string; email: string; password: string }): Promise<void> {
+  const response = await fetch('/api/auth/register', {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify(dto)
+  })
+  if (!response.ok) throw new Error('Erreur lors de l\'enregistrement')
+}
+
+export async function loginUser(dto: { username: string; password: string }): Promise<{ accessToken: string; refreshToken: string; idToken: string }> {
+  const response = await fetch('/api/auth/login', {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify(dto)
+  })
+  if (!response.ok) throw new Error('Erreur lors de la connexion')
+  return await response.json()
+}
+
+function authHeaders(): Record<string, string> {
+  if (keycloak.token) {
+    return { Authorization: 'Bearer ' + keycloak.token }
+  }
+  return {}
 }
 
