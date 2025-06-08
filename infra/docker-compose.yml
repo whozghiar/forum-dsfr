@@ -1,5 +1,7 @@
 services:
-  db:
+
+  # Base de données du forum
+  forum_db:
     image: postgres:latest
     container_name: forum_dsfr_db
     env_file:
@@ -10,5 +12,40 @@ services:
       - "5432:5432"
     volumes:
       - forum-db-data:/var/lib/postgresql/data
+
+  # Base de données de Keycloak
+  keycloak_db:
+    image: postgres:latest
+    container_name: forum_dsfr_keycloak_db
+    env_file:
+      - credentials.env
+    environment:
+      POSTGRES_DB: keycloak_db
+      POSTGRES_USER: keycloak_db_user
+      POSTGRES_PASSWORD: keycloak_db_pwd
+    ports:
+      - "5434:5432"  # port externe différent pour éviter conflit avec la bdd du forum
+    volumes:
+      - keycloak-db-data:/var/lib/postgresql/data
+
+  keycloak:
+    image: quay.io/keycloak/keycloak:latest
+    container_name: forum_dsfr_keycloak
+    env_file:
+      - credentials.env
+    environment:
+      KC_DB: postgres
+      KC_DB_URL: jdbc:postgresql://keycloak_db:5432/keycloak_db
+      KC_DB_USERNAME: keycloak_db_user
+      KC_DB_PASSWORD: keycloak_db_pwd
+      KEYCLOAK_ADMIN: keycloak_adm
+      KEYCLOAK_ADMIN_PASSWORD: keycloak_adm_pwd
+    ports:
+      - "8083:8080"
+    command: start-dev
+    depends_on:
+      - keycloak_db
+
 volumes:
   forum-db-data:
+  keycloak-db-data:
