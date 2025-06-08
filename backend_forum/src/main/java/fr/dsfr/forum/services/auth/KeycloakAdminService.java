@@ -7,10 +7,13 @@ import org.keycloak.admin.client.Keycloak;
 import org.keycloak.admin.client.KeycloakBuilder;
 import org.keycloak.admin.client.resource.RealmResource;
 import org.keycloak.admin.client.resource.UsersResource;
+import org.keycloak.representations.AccessTokenResponse;
 import org.keycloak.representations.idm.CredentialRepresentation;
 import org.keycloak.representations.idm.UserRepresentation;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
+
+import java.util.Map;
 
 import java.util.Collections;
 
@@ -29,6 +32,9 @@ public class KeycloakAdminService {
 
     @Value("${keycloak.admin.password}")
     private String password;
+
+    @Value("${keycloak.client-id}")
+    private String clientId;
 
     private Keycloak keycloak;
 
@@ -60,5 +66,17 @@ public class KeycloakAdminService {
         user.setCredentials(Collections.singletonList(credentials));
 
         usersResource.create(user);
+    }
+
+    public AccessTokenResponse login(String user, String pass) {
+        Keycloak kc = KeycloakBuilder.builder()
+                .serverUrl(serverUrl)
+                .realm(realm)
+                .grantType(OAuth2Constants.PASSWORD)
+                .clientId(clientId)
+                .username(user)
+                .password(pass)
+                .build();
+        return kc.tokenManager().getAccessToken();
     }
 }

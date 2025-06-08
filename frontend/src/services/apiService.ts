@@ -94,6 +94,16 @@ export async function registerUser(dto: { username: string; email: string; passw
   if (!response.ok) throw new Error('Erreur lors de l\'enregistrement')
 }
 
+export async function loginUser(dto: { username: string; password: string }): Promise<{ accessToken: string; refreshToken: string; idToken: string }> {
+  const response = await fetch('/api/auth/login', {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify(dto)
+  })
+  if (!response.ok) throw new Error('Erreur lors de la connexion')
+  return await response.json()
+}
+
 function authHeaders(): Record<string, string> {
   if (keycloak.token) {
     return { Authorization: 'Bearer ' + keycloak.token }
