@@ -110,6 +110,13 @@
             <version>3.5.0</version>
         </dependency>
 
+        <!-- Client d'administration Keycloak -->
+        <dependency>
+            <groupId>org.keycloak</groupId>
+            <artifactId>keycloak-admin-client</artifactId>
+            <version>26.0.5</version>
+        </dependency>
+
 
     </dependencies>
 
