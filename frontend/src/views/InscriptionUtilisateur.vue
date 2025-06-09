@@ -74,12 +74,6 @@
       </div>
     </form>
 
-    <DsfrNotice
-      v-if="isFormulaireSoumis"
-      title="Inscription réussie"
-      description="Votre compte a bien été créé."
-      class="fr-mt-4v"
-    />
   </div>
 </template>
 
@@ -96,6 +90,7 @@ import {
 } from '@gouvminint/vue-dsfr'
 import useInscriptionValidation from '@/composables/use-inscription-validation'
 import { inscrireUtilisateur } from '@/services/apiService'
+import { useRouter } from 'vue-router'
 
 const filAriane = [
   { to: '/', text: 'Accueil' },
@@ -124,8 +119,8 @@ const {
 
 // Erreur globale (submit)
 const erreurGlobal = ref<{titre:string,texte:string}|null>(null)
-const isFormulaireSoumis = ref(false)
 const etapeCourante = ref(1)
+const router = useRouter()
 
 // Navigation étapes
 function etapeSuivante() {
@@ -160,7 +155,7 @@ async function soumettreFormulaire() {
       email: form.email,
       motDePasse: form.password
     })
-    isFormulaireSoumis.value = true
+    await router.push({ path: '/connexion', query: { registered: '1' } })
   } catch (e: any) {
     erreurGlobal.value = { titre: 'Erreur serveur', texte: e.message || 'Réessayez plus tard.' }
   }

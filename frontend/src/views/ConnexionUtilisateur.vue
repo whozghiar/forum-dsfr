@@ -1,5 +1,12 @@
 <template>
   <DsfrBreadcrumb :links="filAriane" />
+  <DsfrNotice
+    v-if="messageSucces"
+    type="success"
+    title="Inscription réussie"
+    :description="messageSucces"
+    class="fr-mb-3v"
+  />
   <main class="fr-pt-md-14v" role="main" id="content">
     <div class="fr-container fr-container--fluid fr-mb-md-14v">
       <div class="fr-grid-row fr-grid-row-gutters fr-grid-row--center">
@@ -52,11 +59,11 @@
 </template>
 
 <script setup lang="ts">
-import { ref } from 'vue'
-import {DsfrButton, DsfrBreadcrumb} from '@gouvminint/vue-dsfr'
+import { onMounted, ref } from 'vue'
+import {DsfrButton, DsfrBreadcrumb, DsfrNotice} from '@gouvminint/vue-dsfr'
 import { connecterUtilisateur } from '@/services/apiService'
 import { initKeycloak } from '@/services/keycloak'
-import { useRouter } from 'vue-router'
+import { useRouter, useRoute } from 'vue-router'
 
 const filAriane = [
   { to: '/', text: 'Accueil' },
@@ -66,6 +73,15 @@ const pseudonyme = ref('')
 const motDePasse = ref('')
 const seSouvenir = ref(false)
 const router = useRouter()
+const route = useRoute()
+const messageSucces = ref('')
+
+onMounted(() => {
+  if (route.query.registered) {
+    messageSucces.value = 'Votre compte a été créé. Vous pouvez maintenant vous connecter.'
+    router.replace({ query: {} })
+  }
+})
 
 function creerCompte() {
   router.push('/inscription')

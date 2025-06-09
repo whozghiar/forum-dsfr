@@ -1,10 +1,9 @@
 import { createRouter, createWebHistory } from 'vue-router'
 
 import AboutUs from '../views/AboutUs.vue'
-import Home from '../views/AppHome.vue'
 import ConnexionUtilisateur from '../views/ConnexionUtilisateur.vue'
 import InscriptionUtilisateur from '../views/InscriptionUtilisateur.vue'
-import ForumList from "@/components/Forum/ForumList.vue";
+import ForumList from '@/components/Forum/ForumList.vue'
 import SujetList from "@/components/Sujet/SujetList.vue";
 import Sujet from "@/components/Sujet/Sujet.vue";
 
@@ -14,7 +13,7 @@ const routes = [
   {
     path: '/',
     name: 'Home',
-    component: Home,
+    component: ForumList,
   },
   {
     path: '/a-propos',
@@ -33,8 +32,7 @@ const routes = [
   },
   {
     path: '/forums',
-    name: 'Forums',
-    component: ForumList,
+    redirect: '/',
   },
   { path: '/forums/:forumId/sujets', 
     name: 'Sujets', 
