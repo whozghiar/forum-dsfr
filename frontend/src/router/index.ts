@@ -2,8 +2,8 @@ import { createRouter, createWebHistory } from 'vue-router'
 
 import AboutUs from '../views/AboutUs.vue'
 import Home from '../views/AppHome.vue'
-import Login from '../views/Login.vue'
-import Register from '../views/Register.vue'
+import ConnexionUtilisateur from '../views/ConnexionUtilisateur.vue'
+import InscriptionUtilisateur from '../views/InscriptionUtilisateur.vue'
 import ForumList from "@/components/Forum/ForumList.vue";
 import SujetList from "@/components/Sujet/SujetList.vue";
 import Sujet from "@/components/Sujet/Sujet.vue";
@@ -23,13 +23,13 @@ const routes = [
   },
   {
     path: '/connexion',
-    name: 'Login',
-    component: Login,
+    name: 'Connexion',
+    component: ConnexionUtilisateur,
   },
   {
-    path: '/enregistrement',
-    name: 'Register',
-    component: Register,
+    path: '/inscription',
+    name: 'Inscription',
+    component: InscriptionUtilisateur,
   },
   {
     path: '/forums',

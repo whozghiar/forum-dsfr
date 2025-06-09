@@ -23,10 +23,20 @@ const quickLinks = [
     icon: 'fr-icon-team-fill',
   },
   {
+    label: "Connexion",
+    to: '/connexion',
+    icon: 'fr-icon-user-fill',
+  },
+  {
+    label: "Inscription",
+    to: '/inscription',
+    icon: 'fr-icon-user-add-fill',
+  },
+  {
     label: 'À propos',
     to: '/a-propos',
     icon: 'ri-question-mark',
-    iconRight: true,
+    iconLeft: true,
   }
 ]
 const searchQuery = ref('')

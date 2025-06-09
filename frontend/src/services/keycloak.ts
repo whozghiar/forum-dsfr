@@ -3,7 +3,7 @@ import Keycloak, { type KeycloakInitOptions } from 'keycloak-js'
 const keycloak = new Keycloak({
   url: 'http://localhost:8083',
   realm: 'forum-dsfr',
-  clientId: 'frontend'
+  clientId: 'forum-dsfr_frontend'
 })
 
 export function initKeycloak(options: KeycloakInitOptions = {}) {

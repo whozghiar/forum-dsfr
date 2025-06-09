@@ -14,8 +14,12 @@ import '@gouvfr/dsfr/dist/utility/icons/icons.min.css'
 
 import './main.css'
 
-initKeycloak().then(() => {
-  createApp(App)
-    .use(router)
-    .mount('#app')
-})
+initKeycloak()
+  .catch((err) => {
+    console.error('Erreur lors de l\'initialisation de Keycloak :', err)
+  })
+  .finally(() => {
+    createApp(App)
+      .use(router)
+      .mount('#app')
+  })

@@ -36,7 +36,12 @@ export async function getSujetsByForumId(forumId: number): Promise<Forum> {
 /**
  * Crée un nouveau sujet dans un forum spécifique.
  * @param {number} forumId - L'identifiant du forum dans lequel créer le sujet.
- * @param dto - Un objet contenant les informations du sujet à créer.
+ * @param {Object} dto - Un objet contenant les informations du sujet à créer.
+ * @param {string} dto.titre - Le titre du sujet.
+ * @param {string} dto.message - Le contenu du sujet.
+ * @param {string} dto.auteurId - L'identifiant de l'auteur du sujet.
+ * @returns {Promise<Sujet>} Une promesse contenant le sujet créé.
+ * @throws {Error} Si une erreur survient lors de l'appel à l'API.
  */
 export async function creerSujet(forumId: number, dto: {
   titre: string
@@ -54,8 +59,10 @@ export async function creerSujet(forumId: number, dto: {
 
 /**
  * Récupère la liste des messages d'un sujet spécifique depuis l'API backend.
- * @param forumId
- * @param sujetId
+ * @param {number} forumId - L'identifiant du forum.
+ * @param {number} sujetId - L'identifiant du sujet.
+ * @returns {Promise<Message[]>} Une promesse contenant la liste des messages du sujet.
+ * @throws {Error} Si une erreur survient lors de l'appel à l'API.
  */
 export async function getMessagesBySujetId(forumId: number, sujetId: number): Promise<Message[]> {
   console.log('Appel API /api/forums/'+ forumId +'/sujets/'+ sujetId + '/messages')
@@ -68,9 +75,13 @@ export async function getMessagesBySujetId(forumId: number, sujetId: number): Pr
 
 /**
  * Crée un nouveau message dans un sujet spécifique.
- * @param forumId
- * @param sujetId
- * @param dto
+ * @param {number} forumId - L'identifiant du forum.
+ * @param {number} sujetId - L'identifiant du sujet.
+ * @param {Object} dto - Un objet contenant les informations du message à créer.
+ * @param {string} dto.contenu - Le contenu du message.
+ * @param {number} dto.auteurId - L'identifiant de l'auteur du message.
+ * @returns {Promise<Message>} Une promesse contenant le message créé.
+ * @throws {Error} Si une erreur survient lors de l'appel à l'API.
  */
 export async function creerMessage(forumId: number, sujetId: number, dto: {
   contenu: string
@@ -85,7 +96,16 @@ export async function creerMessage(forumId: number, sujetId: number, dto: {
   return await response.json()
 }
 
-export async function registerUser(dto: { username: string; email: string; password: string }): Promise<void> {
+/**
+ * Enregistre un nouvel utilisateur via l'API backend.
+ * @param {Object} dto - Un objet contenant les informations de l'utilisateur à enregistrer.
+ * @param {string} dto.pseudonyme - Le pseudonyme de l'utilisateur.
+ * @param {string} dto.email - L'adresse email de l'utilisateur.
+ * @param {string} dto.motDePasse - Le mot de passe de l'utilisateur.
+ * @returns {Promise<void>} Une promesse résolue si l'enregistrement est réussi.
+ * @throws {Error} Si une erreur survient lors de l'appel à l'API.
+ */
+export async function inscrireUtilisateur(dto: { pseudonyme: string; email: string; motDePasse: string }): Promise<void> {
   const response = await fetch('/api/auth/register', {
     method: 'POST',
     headers: { 'Content-Type': 'application/json' },
@@ -94,7 +114,15 @@ export async function registerUser(dto: { username: string; email: string; passw
   if (!response.ok) throw new Error('Erreur lors de l\'enregistrement')
 }
 
-export async function loginUser(dto: { username: string; password: string }): Promise<{ accessToken: string; refreshToken: string; idToken: string }> {
+/**
+ * Connecte un utilisateur via l'API backend.
+ * @param {Object} dto - Un objet contenant les informations de connexion de l'utilisateur.
+ * @param {string} dto.pseudonyme - Le pseudonyme de l'utilisateur.
+ * @param {string} dto.motDePasse - Le mot de passe de l'utilisateur.
+ * @returns {Promise<Object>} Une promesse contenant les tokens d'accès, de rafraîchissement et d'identité.
+ * @throws {Error} Si une erreur survient lors de l'appel à l'API.
+ */
+export async function connecterUtilisateur(dto: { pseudonyme: string; motDePasse: string }): Promise<{ accessToken: string; refreshToken: string; idToken: string }> {
   const response = await fetch('/api/auth/login', {
     method: 'POST',
     headers: { 'Content-Type': 'application/json' },
@@ -104,6 +132,11 @@ export async function loginUser(dto: { username: string; password: string }): Pr
   return await response.json()
 }
 
+
+/**
+ * Génère les en-têtes d'autorisation pour les appels API.
+ * @returns {Record<string, string>} Un objet contenant les en-têtes d'autorisation.
+ */
 function authHeaders(): Record<string, string> {
   if (keycloak.token) {
     return { Authorization: 'Bearer ' + keycloak.token }
