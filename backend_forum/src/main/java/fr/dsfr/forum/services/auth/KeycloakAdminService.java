@@ -53,7 +53,8 @@ public class KeycloakAdminService {
                 .serverUrl(serverUrl)
                 .realm(realm)
                 .grantType(OAuth2Constants.PASSWORD)
-                .clientId("admin-cli")
+                .clientId(clientId)
+                .clientSecret("MWfWcioBClLfMhCAp4TsfUX7rzPBrHbh")
                 .username(username)
                 .password(password)
                 .build();
@@ -128,6 +129,7 @@ public class KeycloakAdminService {
                 .realm(realm)
                 .grantType(OAuth2Constants.PASSWORD)
                 .clientId(clientId)
+                .clientSecret("MWfWcioBClLfMhCAp4TsfUX7rzPBrHbh")
                 .username(user)
                 .password(pass)
                 .build()) {

@@ -14,12 +14,20 @@ import '@gouvfr/dsfr/dist/utility/icons/icons.min.css'
 
 import './main.css'
 
-initKeycloak()
-  .catch((err) => {
-    console.error('Erreur lors de l\'initialisation de Keycloak :', err)
-  })
-  .finally(() => {
+initKeycloak({ onLoad: 'check-sso', pkceMethod: 'S256' })
+  .then((authenticated) => {
+    if (authenticated) {
+      console.log("Token Keycloak :", keycloak.token)
+      console.log("Token d'actualisation Keycloak :", keycloak.refreshToken)
+      console.log("Utilisateur Keycloak :", keycloak.tokenParsed)
+    } else {
+      console.warn("Utilisateur non authentifié")
+    }
+
     createApp(App)
       .use(router)
       .mount('#app')
+  })
+  .catch((err) => {
+    console.error('Erreur lors de l\'initialisation de Keycloak :', err)
   })
