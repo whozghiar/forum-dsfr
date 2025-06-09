@@ -9,6 +9,7 @@ import fr.dsfr.forum.services.ForumService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -38,6 +39,7 @@ public class ForumController {
     }
 
     @PostMapping("/create")
+    @PreAuthorize("hasRole('ROLE_ADMINISTRATOR')")
     public ResponseEntity<ForumReponseDTO> createForum(@RequestBody CreerForumDTO dto) {
         Forum forum = new Forum();
         forum.setTitre(dto.getTitre());
@@ -48,6 +50,7 @@ public class ForumController {
     }
 
     @PutMapping("/{forumId}/update")
+    @PreAuthorize("hasRole('ROLE_ADMINISTRATOR')")
     public ResponseEntity<ForumReponseDTO> updateForum(
             @PathVariable Long forumId,
             @RequestBody CreerForumDTO dto) {
@@ -63,6 +66,7 @@ public class ForumController {
     }
 
     @PatchMapping("/{forumId}/patch")
+    @PreAuthorize("hasRole('ROLE_ADMINISTRATOR')")
     public ResponseEntity<ForumReponseDTO> patchForum(
             @PathVariable Long forumId,
             @RequestBody ModifierForumDTO dto) {
@@ -86,6 +90,7 @@ public class ForumController {
     }
 
     @DeleteMapping("/{forumId}/delete")
+    @PreAuthorize("hasRole('ROLE_ADMINISTRATOR')")
     public ResponseEntity<Void> deleteForum(@PathVariable Long forumId) {
         validator.getForumOrThrow(forumId);
         forumService.deleteForum(forumId);

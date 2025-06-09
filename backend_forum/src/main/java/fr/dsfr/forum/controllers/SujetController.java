@@ -12,6 +12,7 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 import java.time.LocalDateTime;
@@ -33,6 +34,7 @@ public class SujetController {
     }
 
     @PostMapping("/create")
+    @PreAuthorize("hasAnyRole('ROLE_ADMINISTRATOR','ROLE_UTILISATEUR')")
     public ResponseEntity<SujetReponseDTO> createSujet(
             @PathVariable Long forumId,
             @RequestBody CreerSujetDTO dto) {
@@ -61,6 +63,7 @@ public class SujetController {
     }
 
     @PutMapping("/{sujetId}/update")
+    @PreAuthorize("hasRole('ROLE_ADMINISTRATOR')")
     public ResponseEntity<SujetReponseDTO> updateSujet(
             @PathVariable Long forumId,
             @PathVariable Long sujetId,
@@ -77,6 +80,7 @@ public class SujetController {
     }
 
     @PatchMapping("/{sujetId}/patch")
+    @PreAuthorize("hasRole('ROLE_ADMINISTRATOR')")
     public ResponseEntity<SujetReponseDTO> patchSujet(
             @PathVariable Long forumId,
             @PathVariable Long sujetId,

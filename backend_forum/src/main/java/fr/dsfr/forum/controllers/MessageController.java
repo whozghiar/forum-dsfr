@@ -8,9 +8,14 @@ import fr.dsfr.forum.beans.dto.MessageDTO.MessageReponseDTO;
 import fr.dsfr.forum.beans.dto.MessageDTO.ModifierMessageDTO;
 import fr.dsfr.forum.services.EntityValidatorService;
 import fr.dsfr.forum.services.MessageService;
+import fr.dsfr.forum.services.auth.KeycloakAdminService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.security.oauth2.server.resource.authentication.JwtAuthenticationToken;
 import org.springframework.web.bind.annotation.*;
 
 import java.time.LocalDateTime;
@@ -23,6 +28,8 @@ public class MessageController {
 
     private final MessageService messageService;
     private final EntityValidatorService validator;
+
+
 
     @GetMapping()
     public ResponseEntity<List<MessageReponseDTO>> getMessagesBySujetOfForum(
@@ -41,6 +48,7 @@ public class MessageController {
 
         return ResponseEntity.ok(dtos);
     }
+
     @GetMapping("/{messageId}")
     public ResponseEntity<MessageReponseDTO> getMessageById(@PathVariable Long messageId) {
         Message message = validator.getMessageOrThrow(messageId);
@@ -49,6 +57,7 @@ public class MessageController {
 
 
     @PostMapping("/create")
+    @PreAuthorize("hasAnyRole('ROLE_ADMINISTRATOR','ROLE_UTILISATEUR')")
     public ResponseEntity<MessageReponseDTO> createMessageInSujetOfForum(
             @PathVariable Long forumId,
             @PathVariable Long sujetId,
@@ -59,6 +68,11 @@ public class MessageController {
 
         // Valide que l'auteur existe
         Auteur auteur = validator.getAuteurOrThrow(dto.getAuteurId());
+
+        // Vérifie que l'auteur du message est bien l'utilisateur connecté
+        if(!auteur.getPseudo().equals(KeycloakAdminService.getUtilisateurConnecte())){
+            return ResponseEntity.status(HttpStatus.FORBIDDEN).build();
+        }
 
         // Crée le message à partir du DTO
         Message message = new Message();
@@ -76,6 +90,7 @@ public class MessageController {
     }
 
     @PutMapping("/{messageId}/update")
+    @PreAuthorize("hasAnyRole('ROLE_ADMINISTRATOR','ROLE_UTILISATEUR')")
     public ResponseEntity<MessageReponseDTO> updateMessageInSujetOfForum(
             @PathVariable Long forumId,
             @PathVariable Long sujetId,
@@ -87,6 +102,11 @@ public class MessageController {
 
         // Valide que l'auteur existe
         Auteur auteur = validator.getAuteurOrThrow(dto.getAuteurId());
+
+        // Vérifie que l'auteur du message est bien l'utilisateur connecté
+        if(!auteur.getPseudo().equals(KeycloakAdminService.getUtilisateurConnecte())){
+            return ResponseEntity.status(HttpStatus.FORBIDDEN).build();
+        }
 
         // Valide que le message existe et qu'il appartient bien au sujet
         Message message = validator.getMessageOrThrow(messageId);
@@ -106,6 +126,7 @@ public class MessageController {
     }
 
     @PatchMapping("/{messageId}/patch")
+    @PreAuthorize("hasAnyRole('ROLE_ADMINISTRATOR','ROLE_UTILISATEUR')")
     public ResponseEntity<MessageReponseDTO> patchMessageInSujetOfForum(
             @PathVariable Long forumId,
             @PathVariable Long sujetId,
@@ -117,6 +138,11 @@ public class MessageController {
 
         // Valide que le message existe et qu'il appartient bien au sujet
         Message message = validator.getMessageOrThrow(messageId);
+
+        // Vérifie que l'auteur du message est bien l'utilisateur connecté
+        if(!message.getAuteur().getPseudo().equals(KeycloakAdminService.getUtilisateurConnecte())){
+            return ResponseEntity.status(HttpStatus.FORBIDDEN).build();
+        }
 
         if(dto.getContenu() != null) {
             message.setContenu(dto.getContenu());
@@ -143,6 +169,7 @@ public class MessageController {
     }
 
     @DeleteMapping("/{messageId}/delete")
+    @PreAuthorize("hasAnyRole('ROLE_ADMINISTRATOR','ROLE_UTILISATEUR')")
     public ResponseEntity<Void> deleteMessage(@PathVariable Long messageId) {
         validator.getMessageOrThrow(messageId);
         messageService.deleteMessage(messageId);

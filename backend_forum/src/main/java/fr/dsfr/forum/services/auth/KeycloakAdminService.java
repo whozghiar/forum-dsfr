@@ -11,9 +11,10 @@ import org.keycloak.representations.AccessTokenResponse;
 import org.keycloak.representations.idm.CredentialRepresentation;
 import org.keycloak.representations.idm.UserRepresentation;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.security.oauth2.server.resource.authentication.JwtAuthenticationToken;
 import org.springframework.stereotype.Service;
-
-import java.util.Map;
 
 import java.util.Collections;
 
@@ -78,5 +79,35 @@ public class KeycloakAdminService {
                 .password(pass)
                 .build();
         return kc.tokenManager().getAccessToken();
+    }
+
+    /**
+     * Récupère le nom d'utilisateur de l'utilisateur actuellement connecté.
+     * Cette méthode utilise le contexte de sécurité pour obtenir l'authentification
+     * et extrait la revendication `preferred_username` du jeton JWT si disponible.
+     *
+     * @return Le nom d'utilisateur de l'utilisateur connecté, ou `null` si aucune
+     *         authentification n'est disponible ou si le jeton ne contient pas la revendication.
+     */
+    public static String getUtilisateurConnecte(){
+        Authentication auth = SecurityContextHolder.getContext().getAuthentication();
+        if(auth instanceof JwtAuthenticationToken token){
+            return token.getToken().getClaimAsString("preferred_username");
+        }
+        return null;
+    }
+
+    /**
+     * Vérifie si l'utilisateur actuellement connecté possède le rôle d'administrateur.
+     * Cette méthode utilise le contexte de sécurité pour obtenir l'authentification
+     * et parcourt les autorités accordées à l'utilisateur afin de déterminer
+     * si le rôle `ROLE_ADMIN` est présent.
+     *
+     * @return `true` si l'utilisateur possède le rôle d'administrateur, sinon `false`.
+     */
+    public static boolean isAdministrateur() {
+        Authentication auth = SecurityContextHolder.getContext().getAuthentication();
+        return auth.getAuthorities().stream()
+                .anyMatch(grantedAuthority -> grantedAuthority.getAuthority().equals("ROLE_ADMIN"));
     }
 }
