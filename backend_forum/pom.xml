@@ -110,7 +110,7 @@
             <version>3.5.0</version>
         </dependency>
 
-        <!-- Client d'administration Keycloak -->
+        <!-- https://mvnrepository.com/artifact/org.keycloak/keycloak-admin-client -->
         <dependency>
             <groupId>org.keycloak</groupId>
             <artifactId>keycloak-admin-client</artifactId>
