@@ -7,6 +7,11 @@ const keycloak = new Keycloak({
 })
 
 export function initKeycloak(options: KeycloakInitOptions = {}) {
+  // Vérifie si l'utilisateur est déjà authentifié
+  if (keycloak.authenticated) {
+    console.log('Utilisateur déjà authentifié')
+    return Promise.resolve(true)
+  }
   return keycloak.init({ onLoad: 'check-sso', pkceMethod: 'S256', ...options })
 }
 

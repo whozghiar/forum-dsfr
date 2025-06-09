@@ -45,6 +45,9 @@ public class KeycloakAdminService {
     @Value("${keycloak.client-id}")
     private String clientId;
 
+    @Value("${keycloak.client-id_bis}")
+    private String clientIdAuthentification;
+
     private Keycloak keycloak;
 
     @PostConstruct
@@ -123,13 +126,13 @@ public class KeycloakAdminService {
             throw new IllegalArgumentException("Utilisateur ou mot de passe invalide.");
         }
         // Création et fermeture automatique du client Keycloak
-        log.debug("Création du client Keycloak pour l'authentification");
+        log.debug("Création du client Keycloak pour l'authentification via le client : {}", clientIdAuthentification);
         try (Keycloak kc = KeycloakBuilder.builder()
                 .serverUrl(serverUrl)
                 .realm(realm)
                 .grantType(OAuth2Constants.PASSWORD)
-                .clientId(clientId)
-                .clientSecret("MWfWcioBClLfMhCAp4TsfUX7rzPBrHbh")
+                .clientId(clientIdAuthentification)
+                .clientSecret("2shBNt31L2aK8HCYgJe8xgxmS262hmYN")
                 .username(user)
                 .password(pass)
                 .build()) {
