@@ -106,7 +106,7 @@ export async function creerMessage(forumId: number, sujetId: number, dto: {
  * @throws {Error} Si une erreur survient lors de l'appel à l'API.
  */
 export async function inscrireUtilisateur(dto: { pseudonyme: string; email: string; motDePasse: string }): Promise<void> {
-  const response = await fetch('/api/auth/register', {
+  const response = await fetch('/api/auth/inscription', {
     method: 'POST',
     headers: { 'Content-Type': 'application/json' },
     body: JSON.stringify(dto)
@@ -123,7 +123,7 @@ export async function inscrireUtilisateur(dto: { pseudonyme: string; email: stri
  * @throws {Error} Si une erreur survient lors de l'appel à l'API.
  */
 export async function connecterUtilisateur(dto: { pseudonyme: string; motDePasse: string }): Promise<{ accessToken: string; refreshToken: string; idToken: string }> {
-  const response = await fetch('/api/auth/login', {
+  const response = await fetch('/api/auth/connexion', {
     method: 'POST',
     headers: { 'Content-Type': 'application/json' },
     body: JSON.stringify(dto)

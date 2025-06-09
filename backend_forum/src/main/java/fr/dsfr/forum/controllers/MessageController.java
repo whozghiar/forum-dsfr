@@ -70,7 +70,7 @@ public class MessageController {
         Auteur auteur = validator.getAuteurOrThrow(dto.getAuteurId());
 
         // Vérifie que l'auteur du message est bien l'utilisateur connecté
-        if(!auteur.getPseudo().equals(KeycloakAdminService.getUtilisateurConnecte())){
+        if(!KeycloakAdminService.isAuteur(auteur.getPseudo())){
             return ResponseEntity.status(HttpStatus.FORBIDDEN).build();
         }
 
@@ -104,7 +104,7 @@ public class MessageController {
         Auteur auteur = validator.getAuteurOrThrow(dto.getAuteurId());
 
         // Vérifie que l'auteur du message est bien l'utilisateur connecté
-        if(!auteur.getPseudo().equals(KeycloakAdminService.getUtilisateurConnecte())){
+        if(!KeycloakAdminService.isAuteur(auteur.getPseudo())){
             return ResponseEntity.status(HttpStatus.FORBIDDEN).build();
         }
 
@@ -140,7 +140,7 @@ public class MessageController {
         Message message = validator.getMessageOrThrow(messageId);
 
         // Vérifie que l'auteur du message est bien l'utilisateur connecté
-        if(!message.getAuteur().getPseudo().equals(KeycloakAdminService.getUtilisateurConnecte())){
+        if(!KeycloakAdminService.isAuteur(message.getAuteur().getPseudo())){
             return ResponseEntity.status(HttpStatus.FORBIDDEN).build();
         }
 
